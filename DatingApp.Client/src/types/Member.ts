@@ -1,4 +1,4 @@
-export type Member= {
+export type Member = {
   id: string;
   dateOfBirth: string; // ISO date string (e.g., "1986-07-22")
   imageUrl?: string;
@@ -9,10 +9,16 @@ export type Member= {
   description?: string;
   city: string;
   country: string;
-}
-export type  Photo ={
+};
+export type Photo = {
   id: number;
   url: string;
   publicId?: string;
   memberId: string;
-}
+};
+export type EditableMember = {
+  displayName: string;
+  description?: string;
+  city: string;
+  country: string;
+};

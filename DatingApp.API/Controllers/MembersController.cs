@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using DatingApp.API.Data;
+using DatingApp.API.DTOs;
 using DatingApp.API.Entities;
+using DatingApp.API.Extensions;
 using DatingApp.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,5 +34,33 @@ public class MembersController(IMemberRepository memberRepo) : BaseApiController
         var photos = await memberRepo.GetPhotosForMemberAsync(id);
         return Ok(photos);
     }
+    [HttpPut]
+    public async Task<ActionResult> UpdateMember(MemberUpdateDto memberUpdateDto)
+    {
+        var memberId = User.GetMemberId();
+
+
+        var member = await memberRepo.GetMemberForUpdateAsync(memberId);
+
+        if (member == null)
+            return BadRequest("Could not get member");
+
+        member.City = memberUpdateDto.City ?? member.City;
+        member.Country = memberUpdateDto.Country ?? member.Country;
+        member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName;
+        member.Description = memberUpdateDto.Description ?? member.Description;
+
+        member.User.DisplayName = memberUpdateDto.DisplayName ?? member.User.DisplayName;
+
+        memberRepo.Update(member);
+
+        if (await memberRepo.SaveAllAsync())
+        {
+            return NoContent();
+        }
+
+        return BadRequest("Failed to update member");
+    }
+
 }
 
